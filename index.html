@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Save Page as PDF</title>
+  <!-- include html2pdf.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+</head>
+<body style=" text-align: center; ">
+<div onsubmit="handleSubmit(event)">
+    <h3>TRANSFER POINTS CALCULATOR(APPROXIMATE) BY NVL</h3>
+    <h3><a href="https://teachers2025.blogspot.com/" target="_blank">Teachers2025.blogspot.com</a></h3>
+    <!-- You can have tables, images, additional text, etc. -->
+  
+  <form id="userForm"   style="margin-left: 15%;">
+   <table class="table"  >
+  <tbody style="text-align: left;  ">
+    <tr>
+      <td>Name of the teacher </td>
+      <td><input type="text" id="tName" required></td>
+    </tr>
+    <tr>
+      <th>Date joining in the service</th>
+      <td><input type="date" id="oldDate" required></td>
+      <td><span id="result1"></span></td>
+    </tr>
+
+    <tr>
+      <th>Present working place category</th>
+      <td>
+        <select id="catagory" required>
+          <option value="">- select -</option>
+          <option value="1">I</option>
+          <option value="2">II</option>
+          <option value="3">III</option>
+          <option value="5">IV</option>
+        </select>
+      </td>
+      <td><span id="result2"></span></td>
+    </tr>
+
+    <tr>
+      <th>Date of joining in present school</th>
+      <td><input type="date" id="joinDate" required></td>
+      <td><span id="result23"></span></td>
+    </tr>
+
+    <tr>
+      <th>Are you claiming spouse?</th>
+      <td>
+        <select id="spouse" required>
+          <option value="0">- select -</option>
+          <option value="5">YES</option>
+          <option value="0">NO</option>
+        </select>
+      </td>
+      <td><span id="result4"></span></td>
+    </tr>
+
+    <tr>
+      <th>PHC %</th>
+      <td>
+        <select id="phc" required>
+          <option value="0">- select -</option>
+          <option value="0">NA</option>
+          <option value="5">Orthopedic 40%–55%</option>
+          <option value="5">Hearing 60–70 dB (51%–70%)</option>
+          <option value="7">Visually 40% disability</option>
+          <option value="7">Orthopedic 56%–69%</option>
+        </select>
+      </td>
+      <td><span id="result5"></span></td>
+    </tr>
+
+    <tr>
+      <th>Are you a Union Bearer?</th>
+      <td>
+        <select id="union" required>
+          <option value="0">- select -</option>
+          <option value="5">YES</option>
+          <option value="0">NO</option>
+        </select>
+      </td>
+      <td><span id="result6"></span></td>
+    </tr>
+
+    <tr>
+      <th>Are you affected by re-apportionment?</th>
+      <td>
+        <select id="reapprotionment" required>
+          <option value="0">- select -</option>
+          <option value="0">NO</option>
+          <option value="5">YES</option>
+          <option value="7">YES (2 times)</option>
+        </select>
+      </td>
+      <td><span id="result7"></span></td>
+    </tr>
+
+    <tr>
+      <th>Legally Separated Women<br><small>(Not applicable in case of remarriage)</small></th>
+      <td>
+        <select id="SeperatedWomen" required>
+          <option value="0">- select -</option>
+          <option value="5">YES</option>
+          <option value="0">NO</option>
+        </select>
+      </td>
+      <td><span id="result8"></span></td>
+    </tr>
+
+    <tr>
+      <th>Scouts and Guides Unit<br><small>(Active for past 2 years as of May 31st)</small></th>
+      <td>
+        <select id="Souts" required >
+          <option value="0">- select -</option>
+          <option value="5">YES</option>
+          <option value="0">NO</option>
+        </select>
+      </td>
+      <td><span id="result9"></span></td>
+    </tr>
+    <tr>
+      <th></th>
+      <td><h3 id="finalResult" ></h3></td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>    
+    <button type="submit" onclick="calculate()" id="submitBtn" >submit</button>
+  </form>
+</div>
+  <script>     
+    function getServiceDuration(startDateStr, endDateStr) {
+  const startDate = new Date(startDateStr);
+  const endDate = new Date(endDateStr);
+
+  const utcStart = Date.UTC(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+  const utcEnd = Date.UTC(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
+
+  const millisecondsPerDay = 1000 * 60 * 60 * 24;
+  const dayDifference = Math.floor((utcEnd - utcStart) / millisecondsPerDay);
+
+  // Calculate service as half day per dayDifference divided by 365, rounded to 4 decimals
+  return Number(((dayDifference * 0.5) / 365).toFixed(4));
+}
+
+function joiningDuration(startDateStr, endDateStr) {
+  const startDate = new Date(startDateStr);
+  const endDate = new Date(endDateStr);
+
+  const utcStart = Date.UTC(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+  const utcEnd = Date.UTC(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
+
+  const millisecondsPerDay = 1000 * 60 * 60 * 24;
+  return Math.floor((utcEnd - utcStart) / millisecondsPerDay);
+}
+
+function calculate() {
+
+  // Dates
+  const oldDate = document.getElementById('oldDate').value;
+  const joinDate = document.getElementById('joinDate').value;
+
+  // Calculate service duration once
+  const serviceDuration = getServiceDuration(oldDate, '2025-05-31');
+  document.getElementById('result1').innerHTML = serviceDuration;
+
+  // Category value
+  const catagory = Number(document.getElementById("catagory").value);
+
+  // Joining duration in days
+  const joinDays = joiningDuration(joinDate, '2025-05-31');
+
+  // result23 = (category / 365) * joiningDuration
+  const result23 = (catagory / 365) * joinDays;
+  document.getElementById('result23').innerHTML = result23.toFixed(4);
+
+  // Other selects values
+  const spouse = document.getElementById("spouse").value;
+  document.getElementById('result4').innerHTML = spouse;
+
+  const phc = document.getElementById("phc").value;
+  document.getElementById('result5').innerHTML = phc;
+
+  const union = document.getElementById("union").value;
+  document.getElementById('result6').innerHTML = union;
+
+  const reapprotionment = document.getElementById("reapprotionment").value;
+  document.getElementById('result7').innerHTML = reapprotionment;
+
+  const SeperatedWomen = document.getElementById("SeperatedWomen").value;
+  document.getElementById('result8').innerHTML = SeperatedWomen;
+
+  const Souts = document.getElementById("Souts").value;
+  document.getElementById('result9').innerHTML = Souts;
+
+  // Total points sum all values (convert to Number)
+  const tpoints = 
+    Number(Souts) + 
+    Number(SeperatedWomen) + 
+    Number(reapprotionment) + 
+    Number(union) + 
+    Number(phc) + 
+    Number(spouse) + 
+    Number(result23) + 
+    serviceDuration;
+
+  document.getElementById('finalResult').innerHTML = tpoints.toFixed(4);
+//for printing code below hear
+   }
+ function handleSubmit(event) {
+    event.preventDefault(); // prevent actual form submission
+
+    // Replace button with thank you message
+    const btn = document.getElementById("submitBtn");
+    const thankYou = document.createElement("p");
+    thankYou.innerText = "Check with original Gos";
+    btn.replaceWith(thankYou);
+      let name=document.getElementById("tName").value;
+    // Give time for DOM to update before generating PDF
+    setTimeout(() => {
+      html2pdf()
+        .set({
+          margin: 10,
+          filename: `${name}`+'.pdf',
+          image: { type: 'jpeg', quality: 0.98 },
+          html2canvas: { scale: 2 },
+          jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        })
+        .from(document.body)
+        .save();
+    }, 300); // wait briefly to ensure DOM updates
+  }
+</script>
+</body>
+</html>
